@@ -1,0 +1,139 @@
+#pragma hdrstop
+#pragma argsused
+
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#ifdef _WIN32
+#include <tchar.h>
+#else
+  typedef char _TCHAR;
+  #define _tmain main
+#endif
+
+typedef struct {
+
+	char nom[20];
+	char prenom[20];
+	char classe[20];
+	char adresse[20];
+	int * nbEleve[100];
+
+}student;
+
+void menu();
+
+int addStudent(student * eleve, int nbEleve) {
+
+	char nom[20];
+	char prenom[20];
+	char classe[20];
+	char adresse[20];
+	int choix;
+
+	printf("Entrez le nom de l eleve : ");
+	scanf("%s", nom);
+	strcpy(eleve[nbEleve].nom, nom);
+
+	printf("Entrez le prenom de l eleve : ");
+	scanf("%s", prenom);
+	strcpy(eleve[nbEleve].prenom, prenom);
+
+	printf("Entrez la classe de l eleve : ");
+	scanf("%s", classe);
+	strcpy(eleve[nbEleve].classe, classe);
+
+	printf("Entrez l adresse de l eleve : ");
+	scanf("%s", adresse);
+	strcpy(eleve[nbEleve].adresse, adresse);
+
+	menu();
+
+	return nbEleve+1;
+}
+
+void displayStudent(student * eleve, int nbEleve) {
+
+	int i;
+
+	for(i = 0; i < nbEleve; i++) {
+
+		printf("%s", eleve[nbEleve].nom);
+		printf("%s", eleve[nbEleve].prenom);
+		printf("%s", eleve[nbEleve].classe);
+		printf("%s", eleve[nbEleve].adresse);
+	}
+
+	menu();
+}
+
+void saveStudent(student * eleve, int nbEleve) {
+
+	int * nbStudent;
+	char adresse[20];
+	FILE * fichier;
+
+	nbStudent = &nbEleve;
+
+	printf("Entrez l adresse du fichier : ");
+	scanf("%s", &adresse);
+
+	fichier = fopen(adresse, "r+");
+
+	fwrite(nbStudent, sizeof(int), 1, fichier);
+	fwrite(eleve, sizeof(student), 100, fichier);
+
+	fclose(fichier);
+	menu();
+}
+
+void loadStudent(student * eleve, int nbEleve) {
+
+	int * nbStudent;
+	FILE * fichier;
+
+	nbStudent = &nbEleve;
+	fichier = fopen("C:\student.txt", "r+");
+
+	fread(nbStudent, sizeof(int), 1, fichier);
+	fread(eleve, sizeof(student), 100, fichier);
+
+	fclose(fichier);
+	menu();
+}
+
+void menu() {
+
+	int choix;
+	student eleve[100];
+	int nbEleve = 0;
+
+	printf("1/ Add Student \n2/ Display Student \n3/ saveStudent \n4/ loadStudent \n5/ Leave \n\nChoix : ");
+	scanf("%d", &choix);
+
+	switch (choix) {
+
+		case 1: nbEleve = addStudent(eleve, nbEleve);
+		break;
+		case 2: displayStudent(eleve, nbEleve);
+		break;
+		case 3: saveStudent(eleve, nbEleve);
+		break;
+		case 4: loadStudent(eleve, nbEleve);
+		break;
+		case 5: exit(0);
+		break;
+	}
+}
+
+
+
+int _tmain(int argc, _TCHAR* argv[])
+{
+
+	menu();
+
+	system("PAUSE");
+	return 0;
+}
